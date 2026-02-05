@@ -209,5 +209,8 @@ function formatDuration(totalSeconds) {
   );
 }
 
-renderRunsTable();
+document.addEventListener("DOMContentLoaded", () => {
+  renderRunsTable();
+});
+
 
