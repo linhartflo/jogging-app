@@ -165,13 +165,23 @@ function saveRun(run) {
 
 function renderRunsTable() {
   const runs = getSavedRuns();
-  const tableBody = document.querySelector("#runsTable tbody");
+  const table = document.getElementById("runsTable");
+  const tableBody = table.querySelector("tbody");
+  const noRunsText = document.getElementById("noRunsText");
 
   tableBody.innerHTML = "";
 
+  if (runs.length === 0) {
+    table.style.display = "none";
+    noRunsText.style.display = "block";
+    return;
+  }
+
+  noRunsText.style.display = "none";
+  table.style.display = "table";
+
   runs.forEach(run => {
     const row = document.createElement("tr");
-
     const date = new Date(run.date).toLocaleDateString("de-DE");
 
     row.innerHTML = `
@@ -186,6 +196,7 @@ function renderRunsTable() {
   });
 }
 
+
 function formatDuration(totalSeconds) {
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -199,3 +210,4 @@ function formatDuration(totalSeconds) {
 }
 
 renderRunsTable();
+
