@@ -67,10 +67,11 @@ stopBtn.addEventListener("click", () => {
     distanceKm: Number(totalDistance.toFixed(2)),
     pace: paceText
   };
-  
+
 console.log("Lauf wird gespeichert:", run);
 
   saveRun(run);
+  renderRunsTable();
 
   document.getElementById("currentRunner").textContent =
     `Lauf gespeichert für: ${runnerName}`;
@@ -162,3 +163,39 @@ function saveRun(run) {
   localStorage.setItem("runs", JSON.stringify(runs));
 }
 
+function renderRunsTable() {
+  const runs = getSavedRuns();
+  const tableBody = document.querySelector("#runsTable tbody");
+
+  tableBody.innerHTML = "";
+
+  runs.forEach(run => {
+    const row = document.createElement("tr");
+
+    const date = new Date(run.date).toLocaleDateString("de-DE");
+
+    row.innerHTML = `
+      <td>${run.name}</td>
+      <td>${date}</td>
+      <td>${formatDuration(run.durationSeconds)}</td>
+      <td>${run.distanceKm.toFixed(2)}</td>
+      <td>${run.pace}</td>
+    `;
+
+    tableBody.appendChild(row);
+  });
+}
+
+function formatDuration(totalSeconds) {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  return (
+    String(hours).padStart(2, "0") + ":" +
+    String(minutes).padStart(2, "0") + ":" +
+    String(seconds).padStart(2, "0")
+  );
+}
+
+renderRunsTable();
