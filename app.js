@@ -164,6 +164,8 @@ function saveRun(run) {
 }
 
 function renderRunsTable() {
+    console.log("renderRunsTable wurde aufgerufen");
+
   const runs = getSavedRuns();
   const table = document.getElementById("runsTable");
   const tableBody = table.querySelector("tbody");
