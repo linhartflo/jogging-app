@@ -67,6 +67,8 @@ stopBtn.addEventListener("click", () => {
     distanceKm: Number(totalDistance.toFixed(2)),
     pace: paceText
   };
+  
+console.log("Lauf wird gespeichert:", run);
 
   saveRun(run);
 
@@ -91,17 +93,18 @@ function updateTime() {
     String(minutes).padStart(2, "0") + ":" +
     String(seconds).padStart(2, "0");
 
-  let paceText = "—";
+let paceText = "—";
 
-  if (totalDistance > 0) {
-    const paceSecondsPerKm = totalSeconds / totalDistance;
-    const paceMinutes = Math.floor(paceSecondsPerKm / 60);
-    const paceSeconds = Math.floor(paceSecondsPerKm % 60);
+if (totalDistance >= 0.01) {
+  const paceSecondsPerKm = totalSeconds / totalDistance;
+  const paceMinutes = Math.floor(paceSecondsPerKm / 60);
+  const paceSeconds = Math.floor(paceSecondsPerKm % 60);
 
-    paceText =
-      String(paceMinutes).padStart(2, "0") + ":" +
-      String(paceSeconds).padStart(2, "0");
-  }
+  paceText =
+    String(paceMinutes).padStart(2, "0") + ":" +
+    String(paceSeconds).padStart(2, "0");
+}
+
 
   timeDisplay.textContent =
     `Zeit: ${formattedTime} | Distanz: ${totalDistance.toFixed(2)} km | Pace: ${paceText} min/km`;
