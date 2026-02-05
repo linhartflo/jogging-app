@@ -3,16 +3,29 @@ let timerInterval;
 let watchId;
 let lastPosition = null;
 let totalDistance = 0;
+let runnerName = "";
+
 
 const startBtn = document.getElementById("startBtn");
 const stopBtn = document.getElementById("stopBtn");
 const timeDisplay = document.getElementById("time");
 
 startBtn.addEventListener("click", () => {
+  const nameInput = document.getElementById("runnerName");
+  runnerName = nameInput.value.trim();
+
+  if (runnerName === "") {
+    alert("Bitte gib deinen Namen ein");
+    return;
+  }
+
   if (!navigator.geolocation) {
     alert("GPS wird von deinem Browser nicht unterstützt");
     return;
   }
+
+  document.getElementById("currentRunner").textContent =
+    `Läufer: ${runnerName}`;
 
   startTime = Date.now();
   totalDistance = 0;
@@ -33,6 +46,10 @@ startBtn.addEventListener("click", () => {
 stopBtn.addEventListener("click", () => {
   clearInterval(timerInterval);
   navigator.geolocation.clearWatch(watchId);
+
+  document.getElementById("currentRunner").textContent =
+    `Lauf beendet für: ${runnerName}`;
+
   startBtn.disabled = false;
   stopBtn.disabled = true;
 });
