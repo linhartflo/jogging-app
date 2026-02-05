@@ -38,8 +38,19 @@ stopBtn.addEventListener("click", () => {
 });
 
 function updateTime() {
-  const seconds = Math.floor((Date.now() - startTime) / 1000);
-  timeDisplay.textContent = `Zeit: ${seconds} Sekunden | Distanz: ${totalDistance.toFixed(2)} km`;
+  const elapsedMs = Date.now() - startTime;
+  const totalSeconds = Math.floor(elapsedMs / 1000);
+
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  const formattedTime =
+    String(hours).padStart(2, "0") + ":" +
+    String(minutes).padStart(2, "0") + ":" +
+    String(seconds).padStart(2, "0");
+
+  timeDisplay.textContent = `Zeit: ${formattedTime} | Distanz: ${totalDistance.toFixed(2)} km`;
 }
 
 function handlePosition(position) {
