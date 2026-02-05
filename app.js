@@ -47,12 +47,36 @@ stopBtn.addEventListener("click", () => {
   clearInterval(timerInterval);
   navigator.geolocation.clearWatch(watchId);
 
+  const totalSeconds = Math.floor((Date.now() - startTime) / 1000);
+
+  let paceText = "—";
+  if (totalDistance > 0) {
+    const paceSecondsPerKm = totalSeconds / totalDistance;
+    const paceMinutes = Math.floor(paceSecondsPerKm / 60);
+    const paceSeconds = Math.floor(paceSecondsPerKm % 60);
+
+    paceText =
+      String(paceMinutes).padStart(2, "0") + ":" +
+      String(paceSeconds).padStart(2, "0");
+  }
+
+  const run = {
+    name: runnerName,
+    date: new Date().toISOString(),
+    durationSeconds: totalSeconds,
+    distanceKm: Number(totalDistance.toFixed(2)),
+    pace: paceText
+  };
+
+  saveRun(run);
+
   document.getElementById("currentRunner").textContent =
-    `Lauf beendet für: ${runnerName}`;
+    `Lauf gespeichert für: ${runnerName}`;
 
   startBtn.disabled = false;
   stopBtn.disabled = true;
 });
+
 
 function updateTime() {
   const elapsedMs = Date.now() - startTime;
@@ -122,5 +146,16 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 
 function deg2rad(deg) {
   return deg * (Math.PI / 180);
+}
+
+function getSavedRuns() {
+  const runs = localStorage.getItem("runs");
+  return runs ? JSON.parse(runs) : [];
+}
+
+function saveRun(run) {
+  const runs = getSavedRuns();
+  runs.push(run);
+  localStorage.setItem("runs", JSON.stringify(runs));
 }
 
