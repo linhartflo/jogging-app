@@ -50,8 +50,22 @@ function updateTime() {
     String(minutes).padStart(2, "0") + ":" +
     String(seconds).padStart(2, "0");
 
-  timeDisplay.textContent = `Zeit: ${formattedTime} | Distanz: ${totalDistance.toFixed(2)} km`;
+  let paceText = "—";
+
+  if (totalDistance > 0) {
+    const paceSecondsPerKm = totalSeconds / totalDistance;
+    const paceMinutes = Math.floor(paceSecondsPerKm / 60);
+    const paceSeconds = Math.floor(paceSecondsPerKm % 60);
+
+    paceText =
+      String(paceMinutes).padStart(2, "0") + ":" +
+      String(paceSeconds).padStart(2, "0");
+  }
+
+  timeDisplay.textContent =
+    `Zeit: ${formattedTime} | Distanz: ${totalDistance.toFixed(2)} km | Pace: ${paceText} min/km`;
 }
+
 
 function handlePosition(position) {
   const { latitude, longitude } = position.coords;
