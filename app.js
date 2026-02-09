@@ -294,13 +294,16 @@ function renderPodium() {
   const podiumItems = document.querySelectorAll("#podium li");
 
   podiumItems.forEach((item, index) => {
-    if (ranking[index]) {
-      item.textContent =
-        `${["🥇", "🥈", "🥉"][index]} ${ranking[index].name} – ${ranking[index].label}`;
-    } else {
-      item.textContent = `${["🥇", "🥈", "🥉"][index]} —`;
-    }
-  });
+  const place = index + 1;
+  const medal = ["🥇", "🥈", "🥉"][index];
+
+  if (ranking[index]) {
+    item.textContent =
+      `${medal} ${place}. ${ranking[index].name} – ${ranking[index].label}`;
+  } else {
+    item.textContent = `${medal} ${place}. —`;
+  }
+});
 }
 
 
