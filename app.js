@@ -164,8 +164,6 @@ function saveRun(run) {
 }
 
 function renderRunsTable() {
-    console.log("renderRunsTable wurde aufgerufen");
-
   const runs = getSavedRuns();
   const table = document.getElementById("runsTable");
   const tableBody = table.querySelector("tbody");
@@ -198,7 +196,6 @@ function renderRunsTable() {
   });
 }
 
-
 function formatDuration(totalSeconds) {
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -215,4 +212,5 @@ document.addEventListener("DOMContentLoaded", () => {
   renderRunsTable();
 });
 
+renderRunsTable();
 
