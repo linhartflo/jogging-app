@@ -209,9 +209,24 @@ function formatDuration(totalSeconds) {
   );
 }
 
+function formatPace(secondsPerKm) {
+  if (!isFinite(secondsPerKm)) return "—";
+
+  const minutes = Math.floor(secondsPerKm / 60);
+  const seconds = Math.floor(secondsPerKm % 60);
+
+  return (
+    String(minutes).padStart(2, "0") + ":" +
+    String(seconds).padStart(2, "0") + " min/km"
+  );
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   renderRunsTable();
   renderPodium();
+
+  document.getElementById("podiumMode")
+  .addEventListener("change", renderPodium);
 });
 
 
@@ -219,35 +234,74 @@ renderRunsTable();
 
 function renderPodium() {
   const runs = getSavedRuns();
+  const mode = document.getElementById("podiumMode").value;
 
   if (runs.length === 0) {
     return;
   }
 
-  const totalsByRunner = {};
+  const statsByRunner = {};
 
   runs.forEach(run => {
-    if (!totalsByRunner[run.name]) {
-      totalsByRunner[run.name] = 0;
+    if (!statsByRunner[run.name]) {
+      statsByRunner[run.name] = {
+        totalDistance: 0,
+        runCount: 0,
+        totalSeconds: 0
+      };
     }
-    totalsByRunner[run.name] += run.distanceKm;
+
+    statsByRunner[run.name].totalDistance += run.distanceKm;
+    statsByRunner[run.name].runCount += 1;
+    statsByRunner[run.name].totalSeconds += run.durationSeconds;
   });
 
-  const ranking = Object.entries(totalsByRunner)
-    .map(([name, distance]) => ({ name, distance }))
-    .sort((a, b) => b.distance - a.distance)
-    .slice(0, 3);
+  let ranking = [];
+
+  if (mode === "distance") {
+    ranking = Object.entries(statsByRunner)
+      .map(([name, s]) => ({
+        name,
+        value: s.totalDistance,
+        label: `${s.totalDistance.toFixed(2)} km`
+      }))
+      .sort((a, b) => b.value - a.value);
+  }
+
+  if (mode === "count") {
+    ranking = Object.entries(statsByRunner)
+      .map(([name, s]) => ({
+        name,
+        value: s.runCount,
+        label: `${s.runCount} Läufe`
+      }))
+      .sort((a, b) => b.value - a.value);
+  }
+
+  if (mode === "pace") {
+    ranking = Object.entries(statsByRunner)
+      .map(([name, s]) => {
+        const avgSecondsPerKm = s.totalSeconds / s.totalDistance;
+        return {
+          name,
+          value: avgSecondsPerKm,
+          label: formatPace(avgSecondsPerKm)
+        };
+      })
+      .sort((a, b) => a.value - b.value); // niedrigere Pace = besser
+  }
 
   const podiumItems = document.querySelectorAll("#podium li");
 
   podiumItems.forEach((item, index) => {
     if (ranking[index]) {
       item.textContent =
-        `${["🥇", "🥈", "🥉"][index]} ${ranking[index].name} – ${ranking[index].distance.toFixed(2)} km`;
+        `${["🥇", "🥈", "🥉"][index]} ${ranking[index].name} – ${ranking[index].label}`;
     } else {
       item.textContent = `${["🥇", "🥈", "🥉"][index]} —`;
     }
   });
 }
+
 
 
