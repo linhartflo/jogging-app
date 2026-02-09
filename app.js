@@ -71,6 +71,7 @@ stopBtn.addEventListener("click", () => {
 console.log("Lauf wird gespeichert:", run);
 
   saveRun(run);
+  renderPodium();
   renderRunsTable();
 
   document.getElementById("currentRunner").textContent =
@@ -210,7 +211,43 @@ function formatDuration(totalSeconds) {
 
 document.addEventListener("DOMContentLoaded", () => {
   renderRunsTable();
+  renderPodium();
 });
 
+
 renderRunsTable();
+
+function renderPodium() {
+  const runs = getSavedRuns();
+
+  if (runs.length === 0) {
+    return;
+  }
+
+  const totalsByRunner = {};
+
+  runs.forEach(run => {
+    if (!totalsByRunner[run.name]) {
+      totalsByRunner[run.name] = 0;
+    }
+    totalsByRunner[run.name] += run.distanceKm;
+  });
+
+  const ranking = Object.entries(totalsByRunner)
+    .map(([name, distance]) => ({ name, distance }))
+    .sort((a, b) => b.distance - a.distance)
+    .slice(0, 3);
+
+  const podiumItems = document.querySelectorAll("#podium li");
+
+  podiumItems.forEach((item, index) => {
+    if (ranking[index]) {
+      item.textContent =
+        `${["🥇", "🥈", "🥉"][index]} ${ranking[index].name} – ${ranking[index].distance.toFixed(2)} km`;
+    } else {
+      item.textContent = `${["🥇", "🥈", "🥉"][index]} —`;
+    }
+  });
+}
+
 
