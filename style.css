@@ -12,4 +12,15 @@ button {
 #podium {
   list-style: none;
   padding-left: 0;
+  margin-left: 0;
 }
+
+#podium li {
+  list-style: none;
+}
+
+/* Safari / moderne Browser */
+#podium li::marker {
+  content: "";
+}
+
