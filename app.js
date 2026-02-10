@@ -240,6 +240,8 @@ function renderPodium() {
     return;
   }
 
+  document.getElementById("top10").innerHTML = "";
+
   const statsByRunner = {};
 
   runs.forEach(run => {
@@ -304,7 +306,20 @@ function renderPodium() {
     item.textContent = `${medal} ${place}. —`;
   }
 });
+renderTop10(ranking);
 }
 
+function renderTop10(ranking) {
+  const top10List = document.getElementById("top10");
+  top10List.innerHTML = "";
+
+  ranking.slice(3, 10).forEach((entry, index) => {
+    const li = document.createElement("li");
+    const place = index + 4;
+
+    li.textContent = `${place}. ${entry.name} – ${entry.label}`;
+    top10List.appendChild(li);
+  });
+}
 
 

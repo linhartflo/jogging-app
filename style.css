@@ -24,3 +24,13 @@ button {
   content: "";
 }
 
+#top10 {
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+#top10 li {
+  margin: 4px 0;
+}
+
