@@ -56,7 +56,8 @@ stopBtn.addEventListener("click", async () => {
     const paceSeconds = Math.floor(paceSecondsPerKm % 60);
 
     paceText =
-      String(paceMinutes).padStart(2, "0") + ":" +
+      String(paceMinutes).padStart(2, "0") +
+      ":" +
       String(paceSeconds).padStart(2, "0");
   }
 
@@ -68,11 +69,9 @@ stopBtn.addEventListener("click", async () => {
     pace: paceText
   };
 
-console.log("Lauf wird gespeichert:", run);
-
   await saveRun(run);
-  renderPodium();
-  renderRunsTable();
+  await loadRuns();
+
 
   document.getElementById("currentRunner").textContent =
     `Lauf gespeichert für: ${runnerName}`;
@@ -154,18 +153,14 @@ function deg2rad(deg) {
 }
 
 async function getSavedRuns() {
-  try {
-    const response = await fetch("http://localhost:3000/runs");
-    if (!response.ok) {
-      throw new Error("Fehler beim Laden der Läufe");
-    }
-    return await response.json();
-  } catch (error) {
-    console.error("Backend nicht erreichbar, fallback localStorage:", error);
-    return JSON.parse(localStorage.getItem("runs") || "[]");
-  }
-}
+  const response = await fetch("http://localhost:3000/runs");
 
+  if (!response.ok) {
+    throw new Error("Fehler beim Laden der Läufe");
+  }
+
+  return await response.json();
+}
 
 async function saveRun(run) {
   try {
@@ -185,32 +180,18 @@ async function saveRun(run) {
   }
 }
 
-
-
 async function renderRunsTable() {
   const runs = await getSavedRuns();
-  const table = document.getElementById("runsTable");
-  const tableBody = table.querySelector("tbody");
-  const noRunsText = document.getElementById("noRunsText");
 
+  const tableBody = document.getElementById("runsTableBody");
   tableBody.innerHTML = "";
-
-  if (runs.length === 0) {
-    table.style.display = "none";
-    noRunsText.style.display = "block";
-    return;
-  }
-
-  noRunsText.style.display = "none";
-  table.style.display = "table";
 
   runs.forEach(run => {
     const row = document.createElement("tr");
-    const date = new Date(run.date).toLocaleDateString("de-DE");
 
     row.innerHTML = `
       <td>${run.name}</td>
-      <td>${date}</td>
+      <td>${new Date(run.date).toLocaleDateString()}</td>
       <td>${formatDuration(run.durationSeconds)}</td>
       <td>${run.distanceKm.toFixed(2)}</td>
       <td>${run.pace}</td>
@@ -219,6 +200,7 @@ async function renderRunsTable() {
     tableBody.appendChild(row);
   });
 }
+
 
 function formatDuration(totalSeconds) {
   const hours = Math.floor(totalSeconds / 3600);
@@ -345,4 +327,24 @@ function renderTop10(ranking) {
   });
 }
 
+window.addEventListener("DOMContentLoaded", async () => {
+  await renderRunsTable();
+  await renderPodium();
+});
+
+async function loadRuns() {
+  try {
+    const response = await fetch("http://localhost:3000/runs");
+    const runs = await response.json();
+
+    renderRunsTable(runs);
+    renderPodium(runs);
+  } catch (error) {
+    console.error("Fehler beim Laden der Läufe:", error);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadRuns();
+});
 
