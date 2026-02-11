@@ -25,9 +25,16 @@ app.get("/runs", (req, res) => {
 app.post("/runs", (req, res) => {
   const { name, date, durationSeconds, distanceKm, pace } = req.body;
 
-  if (!name || !date || !durationSeconds || !distanceKm || !pace) {
-    return res.status(400).json({ error: "Ungültige Daten" });
-  }
+  if (
+  !name ||
+  !date ||
+  durationSeconds == null ||
+  distanceKm == null ||
+  !pace
+) {
+  return res.status(400).json({ error: "Ungültige Daten" });
+}
+
 
   const sql = `
     INSERT INTO runs (name, date, durationSeconds, distanceKm, pace)

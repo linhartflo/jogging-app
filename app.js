@@ -43,7 +43,7 @@ startBtn.addEventListener("click", () => {
   stopBtn.disabled = false;
 });
 
-stopBtn.addEventListener("click", () => {
+stopBtn.addEventListener("click", async () => {
   clearInterval(timerInterval);
   navigator.geolocation.clearWatch(watchId);
 
@@ -70,7 +70,7 @@ stopBtn.addEventListener("click", () => {
 
 console.log("Lauf wird gespeichert:", run);
 
-  saveRun(run);
+  await saveRun(run);
   renderPodium();
   renderRunsTable();
 
@@ -153,19 +153,42 @@ function deg2rad(deg) {
   return deg * (Math.PI / 180);
 }
 
-function getSavedRuns() {
-  const runs = localStorage.getItem("runs");
-  return runs ? JSON.parse(runs) : [];
+async function getSavedRuns() {
+  try {
+    const response = await fetch("http://localhost:3000/runs");
+    if (!response.ok) {
+      throw new Error("Fehler beim Laden der Läufe");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Backend nicht erreichbar, fallback localStorage:", error);
+    return JSON.parse(localStorage.getItem("runs") || "[]");
+  }
 }
 
-function saveRun(run) {
-  const runs = getSavedRuns();
-  runs.push(run);
-  localStorage.setItem("runs", JSON.stringify(runs));
+
+async function saveRun(run) {
+  try {
+    const response = await fetch("http://localhost:3000/runs", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(run)
+    });
+
+    if (!response.ok) {
+      throw new Error("Fehler beim Speichern");
+    }
+
+    await response.json();
+  } catch (error) {
+    console.error("Fehler:", error);
+  }
 }
 
-function renderRunsTable() {
-  const runs = getSavedRuns();
+
+
+async function renderRunsTable() {
+  const runs = await getSavedRuns();
   const table = document.getElementById("runsTable");
   const tableBody = table.querySelector("tbody");
   const noRunsText = document.getElementById("noRunsText");
@@ -232,8 +255,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 renderRunsTable();
 
-function renderPodium() {
-  const runs = getSavedRuns();
+async function renderPodium() {
+  const runs = await getSavedRuns();
   const mode = document.getElementById("podiumMode").value;
 
   if (runs.length === 0) {
