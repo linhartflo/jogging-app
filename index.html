@@ -1,31 +1,54 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vereins Jogging App</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
 
-  <h1>🏃‍♂️ Vereins Jogging App</h1>
+  <div class="container">
 
-  <div>
-  <label for="runnerName">Name:</label><br>
-  <input type="text" id="runnerName" placeholder="Dein Name">
-</div>
+    <!-- Stat Cards -->
+    <div class="stats">
+      <div class="stat-card">
+        <h3>⏱ Gesamtzeit</h3>
+        <p id="totalTime">0:00:00</p>
+      </div>
 
-<br>
+      <div class="stat-card">
+        <h3>📏 Gesamtdistanz</h3>
+        <p id="totalDistance">0 km</p>
+      </div>
 
-  <button id="startBtn">Start</button>
-  <button id="stopBtn" disabled>Stop</button>
+      <div class="stat-card">
+        <h3>🏃 Läufe</h3>
+        <p id="totalRuns">0</p>
+      </div>
+    </div>
 
-  <p id="currentRunner"></p>
+    <!-- Hauptbereich -->
+    <div class="main-card">
 
-  <p id="time">Zeit: 0 Sekunden | Distanz: 0 km</p>
+      <h1>🏃 Vereins Jogging App</h1>
 
-  <script src="app.js"></script>
-</body>
-</html>
+      <label for="nameInput">Name:</label>
+      <input type="text" id="nameInput" placeholder="Dein Name" />
+
+      <div class="buttons">
+        <button id="startBtn" class="btn-start">Start</button>
+        <button id="stopBtn" class="btn-stop" disabled>Stop</button>
+      </div>
+
+      <p class="live-stats">
+        Zeit: <span id="time">0 Sekunden</span> |
+        Distanz: <span id="distance">0 km</span>
+      </p>
+
+      <h2>Alle Läufe</h2>
+
 
 <h2>Alle Läufe</h2>
 
